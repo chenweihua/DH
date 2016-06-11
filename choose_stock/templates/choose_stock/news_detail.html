@@ -1,0 +1,32 @@
+{% extends 'choose_stock/base.html' %}
+{% load static %}
+
+{% block main %}
+    {% if news %}
+        <h3 class="text-center">{{ news.name }}</h3>
+        发布时间: {{ news.published_time | date:'Y-m-d H:i:s' }}&nbsp;&nbsp;
+        来源: <a href="{{ news.url }}" target="_blank"> {{ news.origin_from }}</a>
+        <hr style="margin-top: 10px;margin-bottom: 10px">
+        <div style="margin-bottom: 40px">  {# 距离底部40px的距离,为了显示在footer的上面 #}
+            {{ news.content | safe }}
+        </div>
+    {% else %}
+        <h5>您访问的页面不存在...</h5>
+        <script>
+            function go() {//定义函数
+                window.location = "{% url 'index' %}";//页面跳转
+            }
+            window.setTimeout("go()", 1500);//1.5秒后执行函数go
+        </script>
+    {% endif %}
+{% endblock %}
+
+{#{% block footer %}  {# 自定义footer #}
+{#    <div class="footer" style="position: relative">#}
+{#        <div class="container-fluid">#}
+{#            <div>#}
+{#                <p class="text-center">版权所有&copy;盗花</p>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#{% endblock %}#}

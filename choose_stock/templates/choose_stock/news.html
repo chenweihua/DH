@@ -1,0 +1,51 @@
+{% extends 'choose_stock/base.html' %}
+{% load static %}
+
+{% block main %}
+    {% if news_today %}
+        <h3>----今日要闻----</h3>
+        <ul style="margin-bottom: 40px">
+            {% for each_news in news_today %}
+                <li style="list-style-type: none">
+                    <a href="{% url 'news_detail' pk=each_news.pk %}">{{ each_news.name }}</a>
+                    <span style="float: right">{{ each_news.published_time | date:"Y-m-d H:i" }}</span><br>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if news_yes %}
+        <h3>----昨日要闻----</h3>
+        <ul style="margin-bottom: 40px">
+            {% for each_news in news_yes %}
+                <li style="list-style-type: none">
+                    <a href="{% url 'news_detail' pk=each_news.pk %}">{{ each_news.name }}</a>
+                    <span style="float: right">{{ each_news.published_time | date:"Y-m-d H:i" }}</span><br>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if news_be_yes %}
+        <h3>----前日要闻----</h3>
+        <ul style="margin-bottom: 40px">
+            {% for each_news in news_be_yes %}
+                <li style="list-style-type: none">
+                    <a href="{% url 'news_detail' pk=each_news.pk %}">{{ each_news.name }}</a>
+                    <span style="float: right">{{ each_news.published_time | date:"Y-m-d H:i" }}</span><br>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+{% endblock %}
+
+{#{% block footer %}  {# 自定义footer #}
+{#    <div class="footer" style="position: relative">#}
+{#        <div class="container-fluid">#}
+{#            <div>#}
+{#                <p class="text-center">版权所有&copy;盗花</p>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#{% endblock %}#}

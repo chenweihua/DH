@@ -1,0 +1,63 @@
+{% extends 'choose_stock/base.html' %}
+
+{% block main %}
+    <table class="table"> {# 风险提示 #}
+        <tbody style="background-color: #a6e1ec">
+        <tr>
+            <td rowspan="2" style="vertical-align: middle;width: 10%;background-color: #5bc0de">
+                重要提示
+            </td>
+            <td>
+                股市有风险,投资需谨慎。
+            </td>
+        </tr>
+        <tr style="border-color: #a6e1ec">
+            <td style="padding: 7px;">
+                本站为您收集有价值的信息,供您参考。您在实际投资时,要综合考虑多种因素,慎重决策。
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="container-fluid"> {# 消息面介绍及链接 #}
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <img class="img-circle"
+                         src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                         alt="Generic placeholder image" width="140" height="140">
+                </div>
+                <h2 class="text-center">消息面</h2>
+                <p class="text-center">根据时下热门概念,搜寻股市新闻,寻求投资价值.</p>
+                <p class="text-center">
+                    <a class="btn btn-default" href="{% url 'news' %}" role="button">点击进入 &raquo;</a>
+                </p>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <img class="img-circle"
+                         src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                         alt="Generic placeholder image" width="140" height="140">
+                </div>
+                <h2 class="text-center">技术面</h2>
+                <p class="text-center">根据股票K线图形态,寻找具有投资价值的股票.</p>
+                <p class="text-center">
+                    <a class="btn btn-default" href="{% url 'k_means' %}" role="button">点击进入 &raquo;</a>
+                </p>
+            </div>
+            <div class="col-md-4">
+               <div class="text-center">
+                    <img class="img-circle"
+                         src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=="
+                         alt="Generic placeholder image" width="140" height="140">
+                </div>
+                <h2 class="text-center">资金面</h2>
+                <p class="text-center">根据股票被资金追逐的热度,探索具有投资潜力的股票.</p>
+                <p class="text-center">
+                    <a class="btn btn-default" href="{% url 'capital' %}" role="button">点击进入 &raquo;</a>
+                </p>
+            </div><!-- /.col-lg-4 -->
+        </div><!-- /.row -->
+    </div>
+{% endblock %}
