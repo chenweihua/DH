@@ -17,6 +17,7 @@ class SCStockPipeline(object):
     def process_item(self, item, spider):
         # 首先去重,暂时考虑直接在本次抓取中去重,后续必须考虑与数据库中提取的数据相比去重.
         if item['name'] in self.names_seen:
+            print('*' * 64)
             raise DropItem("Duplicate name found: %s" % item['name'])
         else:
             self.names_seen.add(item['name'])
