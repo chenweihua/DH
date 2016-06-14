@@ -3,13 +3,27 @@ import scrapy
 import re
 from datetime import datetime
 from s_c_stock.items import SCStockItem
-import sys # 用于错误输出
+import sys  # 用于错误输出
 
-key_word = '收购|并购|入股|重组|投资|发行|联合|合作|改革|复牌|高送转|证金|增持|携手'  # 股市热门概念
-pattern = '(?:' + key_word + ')'
 now = datetime.now()  # 现在时刻
 today = now.strftime('%m-%d')  # 今日日期
 # today = '06-10'  # 测试用特定日期
+
+
+def pos_or_neg(title):  # 判断是利好消息还是利空消息,利好为1,利空为0,其余为-1
+    key_word_pos = '收购|并购|入股|重组|投资|发行|联合|合作|改革|复牌|高送转|证金|增持|携手'  # 股市热门概念
+    pattern_pos = '(?:' + key_word_pos + ')'
+    pattern_pos = re.compile(pattern_pos)
+    key_word_neg = '撤销|停止|取消|不确定|终止|减持|起诉|违约|叫停'
+    pattern_neg = '(?:' + key_word_neg + ')'
+    pattern_neg = re.compile(pattern_neg)
+    if pattern_pos.search(title) and not pattern_neg.search(title):
+        return 1  # 返回利好消息
+    elif pattern_neg.search(title):
+        return 0  # 返回利空消息
+    else:
+        return -1  # 被舍弃的消息
+
 
 class CStockSpider(scrapy.Spider):
     name = 'choose_stock_news'
@@ -49,7 +63,9 @@ class CStockSpider(scrapy.Spider):
                     title_time = li.xpath('span/text()')[0].extract()
                     if title_time[:5] == today:  # 如果消息的时间与今日的时间相同
                         title = li.xpath('a/@title')[0].extract()
-                        if re.search(pattern, title):  # 如果符合热门概念
+                        flag_pn = pos_or_neg(title)  # 获取新闻类型
+                        if flag_pn != -1:  # 如果符合热门概念
+                            news_each['flag_pn'] = flag_pn  # 保存新闻类型
                             news_each['name'] = title  # 保存新闻标题
                             news_each['url'] = li.xpath('a/@href')[0].extract()  # 保存新闻网址
                             yield scrapy.Request(news_each['url'], meta={'item': news_each},
@@ -72,22 +88,6 @@ class CStockSpider(scrapy.Spider):
         news_each['content'] = ''.join(content)  # 转化为字符串,方法比较基础,但巧妙
         yield news_each
 
-    # def parse_url2(self, response):
-    #     datetime_first = response.xpath('//div[@class="main-list"]'
-    #                                     '/ul[@class="new-list"]/li/span/text()')[0].extract()  # 第一条消息时间
-    #     date_first = datetime_first[:5]  # 第一条消息的日期
-    #     datetime_last = response.xpath('//div[@class="main-list"]'
-    #                                    '/ul[@class="new-list"]/li/span/text()')[-1].extract()  # 最后一条消息的日期和时间
-    #     date_last = datetime_last[:5]  # 最后一条消息的日期
-    #
-    #     if date_first == today:  # 第一条消息的时间为当前时间, 开始抓取
-    #         lis = response.xpath('//div[@class="main-list"]/ul[@class="new-list"]/li')  # <li>的列表
-
-
-
-
-
-
     def parse_url5(self, response):
         datetime_first = response.xpath('//div[@class="mainCont"]/div/div/ul/li/span/text()')[0].extract()  # 第一条消息时间
         date_first = datetime_first[5:10]  # 第一条消息日期
@@ -103,7 +103,9 @@ class CStockSpider(scrapy.Spider):
                     title_time = li.xpath('span/text()')[0].extract()
                     if title_time[5:10] == today:  # 如果消息的时间和今日的时间相同
                         title = li.xpath('a/@title')[0].extract()  # 提取新闻标题
-                        if re.search(pattern, title):  # 如果符合热门概念
+                        flag_pn = pos_or_neg(title)  # 获取新闻类型
+                        if flag_pn != -1:  # 如果符合热门概念
+                            news_each['flag_pn'] = flag_pn  # 保存新闻类型
                             news_each['name'] = title
                             news_each['url'] = li.xpath('a/@href')[0].extract()  # 保存新闻网址
                             news_each['published_time'] = title_time  # 保存新闻发布时间
@@ -122,9 +124,7 @@ class CStockSpider(scrapy.Spider):
         news_each = response.meta['item']
         news_each['origin_from'] = '东方财富网'
         content = response.xpath('//div[@id="ContentBody"]/p').extract()  # 新闻的内容
-        # c_first_paragraph = response.xpath('//div[@id="ContentBody"]/div[@class="c_review"]/text()')[0].extract()  # 第一段的新闻
-        # c_first_paragraph = '<p>    ' + c_first_paragraph + '</p>'
-        # content.insert(0, c_first_paragraph)
+
         content_temp = []  # 将content中的图表变换到content末尾
         for each_content in content[:-1]:
             if 'style' in each_content:
@@ -135,6 +135,3 @@ class CStockSpider(scrapy.Spider):
 
         news_each['content'] = ''.join(content)  # 转化为字符串
         yield news_each
-
-
-

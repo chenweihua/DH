@@ -16,3 +16,4 @@ class SCStockItem(scrapy.Item):
     content = scrapy.Field()  # 新闻内容
     published_time = scrapy.Field()  # 新闻发布时间
     origin_from = scrapy.Field()  # 新闻来源地
+    flag_pn = scrapy.Field()  # 新闻的类型,1为利好,0为利空

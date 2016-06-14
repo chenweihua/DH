@@ -8,6 +8,7 @@ class News(models.Model):
     content = models.TextField()  # 新闻的内容
     published_time = models.DateTimeField()  # 新闻发表的时间
     origin_from = models.CharField(max_length=64)  # 新闻的来源
+    flag_pn = models.IntegerField(default=1)  # 记录新闻的利好还是利空,1为利好,0为利空,-1为无价值
 
     def __str__(self):
         return self.name

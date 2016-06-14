@@ -16,12 +16,18 @@ def index(request):  # 处理主页的视图逻辑
 
 def news(request):  # 处理消息页面的视图逻辑
     context_dict = {}  # 上下文字典
-    news_today = News.objects.filter(published_time__day=now.day).order_by('-published_time')  # 提取出今日新闻列表,既查询,又排序,链接过滤器好
-    context_dict['news_today'] = news_today
-    news_yes = News.objects.filter(published_time__day=yesterday.day).order_by('-published_time')  # 提取昨日新闻列表
-    context_dict['news_yes'] = news_yes
-    news_be_yes = News.objects.filter(published_time__day=the_day_before_yesterday.day).order_by('-published_time')  # 提取前日新闻列表
-    context_dict['news_be_yes'] = news_be_yes
+    news_today_pos = News.objects.filter(published_time__day=now.day, flag_pn=1).order_by('-published_time')  # 提取出今日新闻利好列表,既查询,又排序,链接过滤器好
+    context_dict['news_today_pos'] = news_today_pos
+    news_today_neg = News.objects.filter(published_time__day=now.day, flag_pn=0).order_by('-published_time')  # 提取今日利空新闻列表
+    context_dict['news_today_neg'] = news_today_neg
+    news_yes_pos = News.objects.filter(published_time__day=yesterday.day, flag_pn=1).order_by('-published_time')  # 提取昨日利好新闻列表
+    context_dict['news_yes_pos'] = news_yes_pos
+    news_yes_neg = News.objects.filter(published_time__day=yesterday.day, flag_pn=0).order_by('-published_time')  # 提取昨日利空新闻列表
+    context_dict['news_yes_neg'] = news_yes_neg
+    news_be_yes_pos = News.objects.filter(published_time__day=the_day_before_yesterday.day, flag_pn=1).order_by('-published_time')  # 提取前日利好新闻列表
+    context_dict['news_be_yes_pos'] = news_be_yes_pos
+    news_be_yes_neg = News.objects.filter(published_time__day=the_day_before_yesterday.day, flag_pn=0).order_by('-published_time')  # 提取前日利空新闻列表
+    context_dict['news_be_yes_neg'] = news_be_yes_neg
     return render(request, 'choose_stock/news.html', context_dict)
 
 

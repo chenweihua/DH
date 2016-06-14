@@ -27,9 +27,9 @@ class SCStockPipeline(object):
                                   password='1111ssss',
                                   charset='utf8')  # 建立链接
             cur = con.cursor()  # 建立游标
-            sql = ('insert into choose_stock_news (name, url, content, published_time, origin_from) '
-                   'values (%s, %s, %s, %s, %s)')  # sql执行语句
-            lis = (item['name'], item['url'], item['content'], item['published_time'], item['origin_from'])  # 需要插入的数据
+            sql = ('insert into choose_stock_news (name, url, content, published_time, origin_from, flag_pn) '
+                   'values (%s, %s, %s, %s, %s, %s)')  # sql执行语句
+            lis = (item['name'], item['url'], item['content'], item['published_time'], item['origin_from'], item['flag_pn'])  # 需要插入的数据
             try:
                 cur.execute(sql, lis)
             except Exception as e:
