@@ -5,8 +5,9 @@ from datetime import datetime, timedelta
 
 
 now = datetime.now()  # 现在时刻
-yesterday = now + timedelta(days=-1)
-the_day_before_yesterday = now + timedelta(days=-2)
+yesterday = now + timedelta(days=-1)  # 昨天
+the_day_before_yesterday = now + timedelta(days=-2)  # 前天
+day_5_before = now + timedelta(days=-5)  # 5天前的消息自动从数据库中删除
 
 
 # Create your views here.
@@ -15,6 +16,8 @@ def index(request):  # 处理主页的视图逻辑
 
 
 def news(request):  # 处理消息页面的视图逻辑
+    news_dated = News.objects.filter(published_time__lte=day_5_before)  # 筛选出发布时间在5天前的过时消息
+    news_dated.delete()  # 删除消息
     context_dict = {}  # 上下文字典
     news_today_pos = News.objects.filter(published_time__day=now.day, flag_pn=1).order_by('-published_time')  # 提取出今日新闻利好列表,既查询,又排序,链接过滤器好
     context_dict['news_today_pos'] = news_today_pos

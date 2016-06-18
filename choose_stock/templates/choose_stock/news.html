@@ -2,9 +2,9 @@
 {% load static %}
 
 {% block main %}
-    <h3>----今日要闻----</h3>
+    <h3 class="text-center">----今日要闻----</h3>
     {% if news_today_pos %}
-        <h4>利好消息</h4>
+        <h4 class="text-center">利好消息</h4>
         <ul style="margin-bottom: 40px">
             {% for each_news in news_today_pos %}
                 <li style="list-style-type: none">
@@ -16,7 +16,7 @@
     {% endif %}
 
     {% if news_today_neg %}
-        <h4>利空消息</h4>
+        <h4 class="text-center">利空消息</h4>
         <ul style="margin-bottom: 40px">
             {% for each_news in news_today_neg %}
                 <li style="list-style-type: none">
@@ -28,9 +28,9 @@
     {% endif %}
 
 
-    <h3>----昨日要闻----</h3>
+    <h3 class="text-center">----昨日要闻----</h3>
     {% if news_yes_pos %}
-        <h4>利好消息</h4>
+        <h4 class="text-center">利好消息</h4>
         <ul style="margin-bottom: 40px">
             {% for each_news in news_yes_pos %}
                 <li style="list-style-type: none">
@@ -42,7 +42,7 @@
     {% endif %}
 
     {% if news_yes_neg %}
-        <h4>利空消息</h4>
+        <h4 class="text-center">利空消息</h4>
         <ul style="margin-bottom: 40px">
             {% for each_news in news_yes_neg %}
                 <li style="list-style-type: none">
@@ -54,9 +54,9 @@
     {% endif %}
 
 
-    <h3>----前日要闻----</h3>
+    <h3 class="text-center">----前日要闻----</h3>
     {% if news_be_yes_pos %}
-        <h4>利好消息</h4>
+        <h4 class="text-center">利好消息</h4>
         <ul style="margin-bottom: 40px">
             {% for each_news in news_be_yes_pos %}
                 <li style="list-style-type: none">
@@ -68,7 +68,7 @@
     {% endif %}
 
     {% if news_be_yes_neg %}
-        <h4>利空消息</h4>
+        <h4 class="text-center">利空消息</h4>
         <ul style="margin-bottom: 40px">
             {% for each_news in news_be_yes_neg %}
                 <li style="list-style-type: none">
