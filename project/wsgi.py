@@ -11,7 +11,7 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 # 自定义引入模块
-# import multiprocessing, time
+# import multiprocessing, time, threading
 # from datetime import datetime
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
@@ -34,5 +34,6 @@ application = get_wsgi_application()
 #             print('News process ends at', time.ctime())
 #
 #
-# stock_proc = multiprocessing.Process(target=stock_process)  # 建立子进程
+# # stock_proc = multiprocessing.Process(target=stock_process)  # 建立子进程
+# stock_proc = threading.Thread(target=stock_process)  # 建立子线程
 # stock_proc.start()
