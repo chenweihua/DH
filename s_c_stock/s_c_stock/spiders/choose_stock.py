@@ -16,7 +16,7 @@ def pos_or_neg(title):  # 判断是利好消息还是利空消息,利好为1,利
     key_word_pos = '利好|收购|并购|入股|重组|投资|发行|联合|合作|改革|复牌|高送转|证金|增持|携手'  # 股市热门概念
     pattern_pos = '(?:' + key_word_pos + ')'
     pattern_pos = re.compile(pattern_pos)
-    key_word_neg = '破灭|利空|撤销|停止|取消|不确定|终止|减持|起诉|违约|叫停|夭折|泡汤|欺诈|举报|失效|违规|恶意'
+    key_word_neg = '被查|跌停|被否|破灭|破产|利空|撤销|停止|取消|不确定|终止|减持|起诉|违约|叫停|夭折|泡汤|欺诈|举报|失效|违规|恶意'
     pattern_neg = '(?:' + key_word_neg + ')'
     pattern_neg = re.compile(pattern_neg)
     if pattern_pos.search(title) and not pattern_neg.search(title):
@@ -67,6 +67,7 @@ class CStockSpider(scrapy.Spider):
         return req
 
     def parse_url1(self, response):
+        print('中国证券网')
         # 首先判断第一条新闻的时间,为今日日期,则开始抓取,不是今日日期,停止抓取.
         # 抓取完当前页后,再次判断最后一条新闻的时间,若为今日日期,则进入下一个页面抓取,若不是,则停止抓取.
 
@@ -111,6 +112,7 @@ class CStockSpider(scrapy.Spider):
         yield news_each
 
     def parse_url3(self, response):
+        print('证券时报网')
         datetime_first = response.xpath('//div[@id="mainlist"]/ul/li/p/span/text()')[0].extract()  # 首条消息时间
         date_first = datetime_first[6:11]  # 首条消息日期
         datetime_last = response.xpath('//div[@id="mainlist"]/ul/li/p/span/text()')[-1].extract()  # 尾条消息时间
@@ -149,6 +151,7 @@ class CStockSpider(scrapy.Spider):
         yield news_each
 
     def parse_url5(self, response):
+        print('东方财富网')
         datetime_first = response.xpath('//div[@class="mainCont"]/div/div/ul/li/span/text()')[0].extract()  # 第一条消息时间
         date_first = datetime_first[5:10]  # 第一条消息日期
         # date_first = '06-10'
@@ -197,6 +200,7 @@ class CStockSpider(scrapy.Spider):
         yield news_each
 
     def parse_url6(self, response):  # 只抓取该页面的新闻
+        print('中证网')
         lis = response.xpath('//div[@class="column-box"]/ul/li')  # <li>列表
         for li in lis:
             news_each = SCStockItem()
@@ -225,6 +229,7 @@ class CStockSpider(scrapy.Spider):
         yield news_each
 
     def parse_url7(self, response):
+        print('新浪网')
         datetime_first = response.xpath('//div[@id="Main"]/div[@class="listBlk"]/ul/li/span/text()')[0].extract()
         date_first = datetime_first[1:3] + '-' + datetime_first[4:6]
         datetime_last = response.xpath('//div[@id="Main"]/div[@class="listBlk"]/ul/li/span/text()')[-1].extract()
@@ -267,6 +272,7 @@ class CStockSpider(scrapy.Spider):
         yield news_each
 
     def parse_url8(self, response):  # 只抓取该页面新闻
+        print('和讯网')
         lis = response.xpath('//div[@class="temp01"]/ul/li')
         for li in lis:
             news_each = SCStockItem()
@@ -292,6 +298,6 @@ class CStockSpider(scrapy.Spider):
         news_each = response.meta['item']
         content = response.xpath('//div[@id="artibody"]/p').extract()
         if not content:
-            content = response.xpath('//div[@id="artibody"]').extract()
+            content = response.xpath('//div[@id="artibody"]|//div[@class="art_contextBox"]').extract()
         news_each['content'] = ''.join(content)
         yield news_each

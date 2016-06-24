@@ -10,8 +10,10 @@ https://docs.djangoproject.com/en/1.9/howto/deployment/wsgi/
 import os
 
 from django.core.wsgi import get_wsgi_application
+
 # 自定义引入模块
-# import multiprocessing, time, threading
+import multiprocessing, time, threading
+
 # from datetime import datetime
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
@@ -20,6 +22,8 @@ application = get_wsgi_application()
 
 # 自定义代码
 # BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # 获取项目根目录文件夹
+
+
 #
 #
 # def stock_process():  # 股票进程,应包含news, k_measn, capital三个处理阶段
@@ -34,6 +38,46 @@ application = get_wsgi_application()
 #             print('News process ends at', time.ctime())
 #
 #
-# # stock_proc = multiprocessing.Process(target=stock_process)  # 建立子进程
-# stock_proc = threading.Thread(target=stock_process)  # 建立子线程
+# stock_proc = multiprocessing.Process(target=stock_process)  # 建立子进程
+# # stock_proc = threading.Thread(target=stock_process)  # 建立子线程
 # stock_proc.start()
+
+
+
+# ********************************************************************
+# from apscheduler.schedulers.blocking import BlockingScheduler
+# from datetime import datetime
+# import time
+#
+#
+# def tick():
+#     # print('Tick! The time is: %s' % datetime.now()
+#     news_path = os.path.join(BASE_DIR, 's_c_stock')
+#     os.chdir(news_path)
+#     print(os.getcwd())
+#     os.system('scrapy crawl choose_stock_news --loglevel INFO')  # doesn't work
+#
+#
+# scheduler = BlockingScheduler()
+# scheduler.add_job(tick, 'cron', minute='*/1', hour='*')
+# print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
+# try:
+#     scheduler.start()
+# except (KeyboardInterrupt, SystemExit):
+#     scheduler.shutdown()
+
+# ****************************************************************
+# news_path = os.path.join(BASE_DIR, 's_c_stock')
+# os.chdir(news_path)
+# os.system('scrapy crawl choose_stock_news')
+
+
+# def stock_process():  # 股票进程,应包含news, k_measn, capital三个处理阶段
+#     print('News process starts at', time.ctime())
+#     news_path = os.path.join(BASE_DIR, 's_c_stock')
+#     os.chdir(news_path)
+#     os.system('scrapy crawl choose_stock_news')
+#     print('News process ends at', time.ctime())
+#
+#
+# #stock_process()

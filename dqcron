@@ -1,0 +1,3 @@
+*/5 * * * * sh $HOME/Desktop/Python/CHOOSE_STOCK/project/init_scrapy_news.sh >> /dev/ttys001
+
+

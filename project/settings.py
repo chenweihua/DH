@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import choose_stock
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'choose_stock',
+    'django_crontab',  # django定时任务的app
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -72,7 +72,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
@@ -86,7 +85,6 @@ DATABASES = {
         'PORT': '',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -106,7 +104,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 # 时间在admin后台界面的显示问题还没有解决.
@@ -121,9 +118,18 @@ USE_L10N = True
 
 USE_TZ = False  # 默认为True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # python manage.py collectstatic 需要
+
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# 添加定时任务
+CRONJOBS = [
+    ('18 21 * * *', 'project.wsgi.stock_process', '> /dev/ttys001'),
+    # ('* * * * *', 'choose_stock.my_cron.scrapy_news'),
+]

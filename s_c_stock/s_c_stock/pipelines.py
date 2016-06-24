@@ -34,7 +34,7 @@ class SCStockPipeline(object):
                 cur.execute(sql, lis)
             except Exception as e:
                 print('*' * 64)
-                print('Insert Error:', e)
+                print('Insert Error_guagua:', e)
                 con.rollback()
             else:
                 con.commit()
