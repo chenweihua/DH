@@ -16,7 +16,11 @@ import multiprocessing, time, threading
 
 # from datetime import datetime
 
+# print(os.environ)  # test
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
+
+# print(os.environ)  # test
 
 application = get_wsgi_application()
 
@@ -69,7 +73,7 @@ application = get_wsgi_application()
 # ****************************************************************
 # news_path = os.path.join(BASE_DIR, 's_c_stock')
 # os.chdir(news_path)
-# os.system('scrapy crawl choose_stock_news')
+# os.system('scrapy crawl choose_stock_news --loglevel WARNING')
 
 
 # def stock_process():  # 股票进程,应包含news, k_measn, capital三个处理阶段

@@ -15,3 +15,11 @@ class News(models.Model):
 
     class Meta:
         verbose_name_plural = 'news'
+
+
+class Name_Id(models.Model):
+    stock_name = models.CharField(max_length=16, unique=True)  # 股票名称,唯一
+    stock_id = models.CharField(max_length=8, unique=True)  # 股票代码, 唯一
+
+    def __str__(self):
+        return '{}-{}'.format(self.stock_name, self.stock_id)

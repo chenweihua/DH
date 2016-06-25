@@ -12,5 +12,6 @@ def scrapy_news():  # 定义抓取股票消息的函数
     os.chdir(path_news)
     # os.system('scrapy crawl choose_stock_news')
     os.system('scrapy list')
+    os.system('scrapy crawl choose_stock_news')
 
 # scrapy_news()

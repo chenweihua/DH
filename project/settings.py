@@ -129,7 +129,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # 添加定时任务
-CRONJOBS = [
-    ('18 21 * * *', 'project.wsgi.stock_process', '> /dev/ttys001'),
-    # ('* * * * *', 'choose_stock.my_cron.scrapy_news'),
-]
+# CRONJOBS = [
+#     ('14 23 * * *', 'choose_stock.my_cron.scrapy_news', '> /dev/ttys001'),
+#     # ('* * * * *', 'choose_stock.my_cron.scrapy_news'),
+# ]

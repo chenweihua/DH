@@ -16,7 +16,7 @@ def pos_or_neg(title):  # 判断是利好消息还是利空消息,利好为1,利
     key_word_pos = '利好|收购|并购|入股|重组|投资|发行|联合|合作|改革|复牌|高送转|证金|增持|携手'  # 股市热门概念
     pattern_pos = '(?:' + key_word_pos + ')'
     pattern_pos = re.compile(pattern_pos)
-    key_word_neg = '被查|跌停|被否|破灭|破产|利空|撤销|停止|取消|不确定|终止|减持|起诉|违约|叫停|夭折|泡汤|欺诈|举报|失效|违规|恶意'
+    key_word_neg = '白忙|被查|跌停|被否|破灭|破产|利空|撤销|停止|取消|不确定|终止|减持|起诉|违约|叫停|夭折|泡汤|欺诈|举报|失效|违规|恶意'
     pattern_neg = '(?:' + key_word_neg + ')'
     pattern_neg = re.compile(pattern_neg)
     if pattern_pos.search(title) and not pattern_neg.search(title):
