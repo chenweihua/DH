@@ -12,7 +12,7 @@
 #export SSH_AUTH_SOCK=/private/tmp/com.apple.launchd.Y2kCfvriyt/Listeners
 #export __CF_USER_TEXT_ENCODING=0x1F5:0x19:0x34
 #export PATH=/usr/local/Cellar/pyenv-virtualenv/20160202/shims:/usr/local/Cellar/pyenv/20160303/libexec:/usr/local/var/pyenv/shims:/usr/local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
-export PATH=/usr/local/bin
+export PATH=/usr/local/bin:/usr/bin
 #export PWD=/Users/DQ/Desktop/Python/CHOOSE_STOCK/project
 export LANG=zh_CN.UTF-8
 #export XPC_FLAGS=0x0
@@ -36,7 +36,7 @@ export LANG=zh_CN.UTF-8
 #export PWD=$HOME/Desktop/Python/CHOOSE_STOCK/project/s_c_stock
 cd $HOME/Desktop/Python/CHOOSE_STOCK/project/s_c_stock
 env
-scrapy crawl choose_stock_news
+nohup scrapy crawl choose_stock_news &
 #ls
 #scrapy list
 #echo '呱呱'
