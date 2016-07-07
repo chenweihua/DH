@@ -75,4 +75,4 @@ class Eachday_Kdata(scrapy.Spider):
             stock_data['stock_id_date'] = stock_data['stock_id'] + '_' + stock_date
             yield stock_data
         except Exception as e:
-            print('抓取数据错误:', e)
+            print(response.url, '抓取数据错误:', e)

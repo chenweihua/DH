@@ -224,7 +224,8 @@ class CStockSpider(scrapy.Spider):
 
     def parse_url6_detail(self, response):
         news_each = response.meta['item']
-        content = response.xpath('//div[@class="Dtext z_content"]/p').extract()  # 新闻内容
+        content = response.xpath('//div[@class="Dtext z_content"]/p|'
+                                 '//div[@class="Dtext z_content"]/div[@class="Custom_UnionStyle"]/p').extract()  # 新闻内容
         news_each['content'] = ''.join(content)
         yield news_each
 

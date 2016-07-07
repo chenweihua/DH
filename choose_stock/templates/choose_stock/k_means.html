@@ -1,6 +1,165 @@
 {% extends 'choose_stock/base.html' %}
+{% load static %}
 
 {% block main %}
     <h1>技术面选股,敬请期待</h1>
+    {% for stock in stocks %}
+        <div id="{{ stock.stock_id }}" style="width: 100%;height: 400px;margin-bottom: 40px"></div>
+        <hr>
+
+
+        <script type="text/javascript">
+            var myChart = echarts.init(document.getElementById('{{ stock.stock_id }}'));
+            {#  {{ stock.stock_id }}必须在引号中 #}
+            var data0 = splitData({{ stock.data | safe }});
+            var option = {
+                title: {
+                    text: '{{ stock.name }}({{ stock.stock_id }})日K线图',
+                    x: 'center', {# 调节居中距离 #}
+                    y: '5%'  {# 调节上下距离 #}
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'line'
+                    },
+                    formatter: function (params) {
+                        var params = params[0];
+                        if (params.seriesIndex == 0) {
+                            return params.name + '<br>' +
+                                    '开盘:' + params.value[0] + '<br>' +
+                                    '收盘:' + params.value[1] + '<br>' +
+                                    '最低:' + params.value[2] + '<br>' +
+                                    '最高:' + params.value[3] + '<br>' +
+                                    '涨跌:' + params.value[4]
+                        } else {
+                            return params.name + '<br>' +
+                                    '成交量:' + params.value + '股'
+                        }
+
+                    }
+                },
+                grid: [{# 在同一坐标系内绘制多图 #}
+                    {
+                        {#                        left: '10%',#}
+                        {#                        right: '8%',#}
+                        height: '50%'
+                    },
+                    {
+                        {#                        left: '10%',#}
+                        {#                        right: '8%',#}
+                        top: '72%', {# 距离顶部的高度 #}
+                        height: '16%'
+                    }
+                ],
+                xAxis: [
+                    {
+                        type: 'category',
+                        data: data0.categoryData,
+                        boundaryGap: false,
+                        axisLine: {
+                            onZero: false
+                        },
+                        min: 'dataMin',
+                        max: 'dataMax'
+                    },
+                    {
+                        type: 'category',
+                        data: data0.categoryData,
+                        gridIndex: 1,
+                        boundaryGap: false,
+                        axisLine: {
+                            onZero: false
+                        },
+                        axisTick: {show: false},
+                        axisLabel: {show: false},
+                        min: 'dataMin',
+                        max: 'dataMax'
+                    }
+                ],
+                yAxis: [
+                    {
+                        scale: true, {# 设置为true,坐标轴不用包含0刻度,更好展示细节 #}
+                        splitArea: {
+                            show: true
+                        }
+                    },
+                    {
+                        scale: true,
+                        gridIndex: 1,
+                        axisTick: {show: false},
+                        axisLine: {show: false},
+                        axisLabel: {show: false},
+                        splitLine: {show: false}  {# 是否限制网格线,类似matlab的grid on/off #}
+                    }
+                ],
+                dataZoom: [{
+                    type: 'slider',
+                    start: 50,
+                    xAxisIndex: [0, 1]  {# 实现同时控制两个图的x坐标轴 #}
+                }],
+                series: [
+                    {
+                        name: '日K线图',
+                        type: 'candlestick',
+                        data: data0.values,
+                        xAxisIndex: 0,
+                        yAxisIndex: 0,
+                        itemStyle: {
+                            normal: {
+                                color0: 'green',
+                                borderColor0: 'green'
+                            }
+                        }
+                    },
+                    {
+                        name: '成交量',
+                        type: 'bar',
+                        xAxisIndex: 1,
+                        yAxisIndex: 1,
+                        data: {{ stock.volumn | safe }},
+                        itemStyle: {
+                            normal: {
+                                color: function(params){  // 颜色靠收盘数据与开盘数据的比较得出,不靠涨跌数据
+                                    var index = params.dataIndex;  // 获取数据索引
+                                    var price_close = parseFloat(data0.values[index][1]);  // 获取股票收盘数据
+                                    var price_open = parseFloat(data0.values[index][0]);
+                                    if(price_close > price_open){
+                                        return 'red';
+                                    }else {
+                                        return 'green';
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                ]
+            };
+            myChart.setOption(option);
+
+
+            function splitData(rawData) {
+                var categoryData = [];
+                var values = [];
+                for (var i = 0; i < rawData.length; i++) {
+                    categoryData.push(rawData[i].splice(0, 1)[0]);
+                    values.push(rawData[i]);
+                }
+                return {
+                    categoryData: categoryData,
+                    values: values
+                }
+            }
+        </script>
+    {% endfor %}
+
+
+
+
+
+
+    {# js k线图代码 #}
+
 {% endblock %}
 
