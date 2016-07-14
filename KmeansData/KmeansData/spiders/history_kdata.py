@@ -25,19 +25,17 @@ def getStockId():  # 获取股票代码
     return res
 
 
-# getStockId()
-
-
-class History_Kdata(scrapy.Spider):
+class HistoryKdata(scrapy.Spider):
     name = 'history_kdata'  # 获取最近三个月的股票数据,只需要获取一次即可
     allowed_domains = ["http://table.finance.yahoo.com/"]  # 在雅虎网获取
 
     def start_requests(self):
         req = []
-        res = getStockId()  # 获取股票代码
+        # res = getStockId()  # 获取股票代码
+        res = [('600643', '爱建集团')]  # 测试单个股票
         # 雅虎股票获取接口的网址为:http://table.finance.yahoo.com/table.csv?a=0&b=1&c=2012&d=3&e=19&f=2012&s=600690.ss
         # a:开始月份，从0开始计数，1月份表示为0；b:开始日期；c:开始年份；d:结束月份，从0开始计数，1月份表示为0；e:结束日期；f:结束年份。
-        url_prefix = 'http://table.finance.yahoo.com/table.csv?a=3&b=1&c=2016&d=5&e=24&f=2016&s='  # 2016-04-01---2016-06-23
+        url_prefix = 'http://table.finance.yahoo.com/table.csv?a=3&b=1&c=2016&d=6&e=24&f=2016&s='  # 2016-04-01---2016-06-23
         for each_id in res:
             stock_data = KmeansdataItem()
             stock_id = each_id[0]

@@ -35,3 +35,18 @@ class KmeansData(models.Model):
     price_close = models.CharField(max_length=8)  # 收盘价
     stock_volumn = models.CharField(max_length=20)  # 成交量
     stock_id_date = models.CharField(max_length=20, unique=True)  # 重要,由股票代码及交易日期组成的字段,判断信息是否唯一的标识.
+
+
+class CashFlowData(models.Model):
+    stock_name = models.CharField(max_length=16)  # 股票名称
+    stock_id = models.CharField(max_length=8)  # 股票代码
+    stock_date = models.DateField()  # 交易日期
+    price_close = models.CharField(max_length=8)  # 收盘价
+    var_degree = models.CharField(max_length=8)  # 股票的涨跌幅度,如-3.2%
+    maincash_in = models.CharField(max_length=8)  # 主力净流入
+    maincash_in_rate = models.CharField(max_length=8)  # 主力净占比
+    join_degree = models.CharField(max_length=8)  # 机构参与度
+    control_type = models.CharField(max_length=8)  # 控盘类型:不控盘,轻度控盘,中度控盘,完全控盘
+    main_cost = models.CharField(max_length=8)  # 主力成本
+    stock_id_date = models.CharField(max_length=20, unique=True)
+

@@ -4,6 +4,7 @@
 {% block main %}
     <h1>技术面选股,敬请期待</h1>
     {% for stock in stocks %}
+        {{ forloop.counter }}
         <div id="{{ stock.stock_id }}" style="width: 100%;height: 400px;margin-bottom: 40px"></div>
         <hr>
 
@@ -16,7 +17,7 @@
                 title: {
                     text: '{{ stock.name }}({{ stock.stock_id }})日K线图',
                     x: 'center', {# 调节居中距离 #}
-                    y: '5%'  {# 调节上下距离 #}
+                    y: '0%'  {# 调节上下距离 #}
                 },
                 tooltip: {
                     trigger: 'axis',
@@ -24,8 +25,8 @@
                         type: 'line'
                     },
                     formatter: function (params) {
-                        var params = params[0];
-                        if (params.seriesIndex == 0) {
+                        if (params[0].seriesType == 'candlestick') {
+                            var params = params[0];
                             return params.name + '<br>' +
                                     '开盘:' + params.value[0] + '<br>' +
                                     '收盘:' + params.value[1] + '<br>' +
@@ -33,10 +34,16 @@
                                     '最高:' + params.value[3] + '<br>' +
                                     '涨跌:' + params.value[4]
                         } else {
-                            return params.name + '<br>' +
-                                    '成交量:' + params.value + '股'
+                            var par;
+                            if (params[1].value != '-') {
+                                par = params[1];
+                            }
+                            else {
+                                par = params[0];
+                            }
+                            return par.name + '<br>' +
+                                    '成交量:' + par.value + '股'
                         }
-
                     }
                 },
                 grid: [{# 在同一坐标系内绘制多图 #}
@@ -82,7 +89,9 @@
                         scale: true, {# 设置为true,坐标轴不用包含0刻度,更好展示细节 #}
                         splitArea: {
                             show: true
-                        }
+                        },
+                        min: 'dataMin',
+                        max: 'dataMax'
                     },
                     {
                         scale: true,
@@ -110,29 +119,122 @@
                                 color0: 'green',
                                 borderColor0: 'green'
                             }
+                        },
+                        markPoint: {
+                            label: {
+                                normal: {
+                                    formatter: function (param) {
+                                        return param != null ? Math.round(param.value) : '';
+                                    }
+                                }
+                            },
+                            data: [
+{#                                {#}
+{#                                    name: 'XX标点',#}
+{#                                    coord: ['2013/5/31', 2300],#}
+{#                                    value: 2300,#}
+{#                                    itemStyle: {#}
+{#                                        normal: {color: 'rgb(41,60,85)'}#}
+{#                                    }#}
+{#                                },#}
+                                {
+                                    name: '最大值',
+                                    type: 'max',
+                                    valueDim: 'highest'
+                                },
+                                {
+                                    name: '最小值',
+                                    type: 'min',
+                                    valueDim: 'lowest'
+                                },
+                                {
+                                    name: '平均值',
+                                    type: 'average',
+                                    valueDim: 'close'
+                                }
+                            ],
+                            tooltip: {
+                                formatter: function (param) {
+                                    return param.name + '<br>' + (param.data.coord || '');
+                                }
+                            }
+                        },
+                        markLine: {
+                            symbol: ['none', 'none'],
+                            data: [
+                                [
+                                    {
+                                        name: 'from lowest to highest',
+                                        type: 'min',
+                                        valueDim: 'lowest',
+                                        symbol: 'circle',
+                                        symbolSize: 10,
+                                        label: {
+                                            normal: {show: false},
+                                            emphasis: {show: false}
+                                        }
+                                    },
+                                    {
+                                        type: 'max',
+                                        valueDim: 'highest',
+                                        symbol: 'circle',
+                                        symbolSize: 10,
+                                        label: {
+                                            normal: {show: false},
+                                            emphasis: {show: false}
+                                        }
+                                    }
+                                ],
+                                {
+                                    name: 'min line on close',
+                                    type: 'min',
+                                    valueDim: 'close'
+                                },
+                                {
+                                    name: 'max line on close',
+                                    type: 'max',
+                                    valueDim: 'close'
+                                }
+                            ]
                         }
                     },
                     {
-                        name: '成交量',
+                        name: '成交量_涨',
                         type: 'bar',
+                        stack: '成交量',
                         xAxisIndex: 1,
                         yAxisIndex: 1,
-                        data: {{ stock.volumn | safe }},
+                        data: {{ stock.volumn_rise | safe }},
                         itemStyle: {
                             normal: {
-                                color: function(params){  // 颜色靠收盘数据与开盘数据的比较得出,不靠涨跌数据
-                                    var index = params.dataIndex;  // 获取数据索引
-                                    var price_close = parseFloat(data0.values[index][1]);  // 获取股票收盘数据
-                                    var price_open = parseFloat(data0.values[index][0]);
-                                    if(price_close > price_open){
-                                        return 'red';
-                                    }else {
-                                        return 'green';
-                                    }
-
-                                }
+                                color: 'red'
+                                {#                                color: function(params){  // 颜色靠收盘数据与开盘数据的比较得出,不靠涨跌数据#}
+                                {#                                    var index = params.dataIndex;  // 获取数据索引#}
+                                {#                                    var price_close = data0.values[index][1];  // 获取股票收盘数据#}
+                                {#                                    var price_open = data0.values[index][0];#}
+                                {#                                    if(price_close > price_open){#}
+                                {#                                        return 'red';#}
+                                {#                                    }else {#}
+                                {#                                        return 'green';#}
+                                {#                                    }#}
+                                {##}
+                                {#                                }#}
                             }
                         }
+                    },
+                    {
+                        name: '成交量_跌',
+                        type: 'bar',
+                        stack: '成交量',
+                        xAxisIndex: 1,
+                        yAxisIndex: 1,
+                        data: {{ stock.volumn_fall | safe }},
+                        itemStyle: {
+                            normal: {
+                                color: 'green'
+                            }
+                        }
+
                     }
                 ]
             };
