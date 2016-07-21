@@ -1,0 +1,424 @@
+{% extends 'choose_stock/base.html' %}
+{% load static %}
+
+{% block main %}
+    <h1 class="text-center">{{ stock_c.stock_id }}{{ stock_c.stock_name }}</h1>
+    <hr>
+    <h4>K线图</h4>
+    <div id="k_data" style="width: 100%;height: 400px;margin-bottom: 20px"></div>
+    <hr>
+    <h4>资金流图</h4>
+    <div id="c_data" style="width: 100%;height: 400px;margin-bottom: 20px"></div>
+    <hr>
+    <h4>近日消息</h4>
+    <div style="margin-bottom: 40px">
+        <ul style="margin-bottom: 40px">
+            {% for each_news in news %}
+                <li style="list-style-type: none">
+                    <a href="{% url 'news_detail' pk=each_news.pk %}" target="_blank">{{ each_news.name }}</a>
+                    <span style="float: right">{{ each_news.published_time | date:"Y-m-d H:i" }}</span><br>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+    <script type="text/javascript">
+        var myChart = echarts.init(document.getElementById('k_data'));
+        {#  {{ stock.stock_id }}必须在引号中 #}
+        var data0 = splitData({{ stock_k.data | safe }});
+        var option = {
+            {#            title: {#}
+            {#                text: '{{ stock_k.name }}({{ stock_k.stock_id }})日K线图',#}
+            {#                x: 'center', {# 调节居中距离 #}
+            {#                y: '0%'  {# 调节上下距离 #}
+            {#            },#}
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'line'
+                },
+                formatter: function (params) {
+                    if (params[0].seriesType == 'candlestick') {
+                        var params = params[0];
+                        return params.name + '<br>' +
+                                '开盘:' + params.value[0] + '<br>' +
+                                '收盘:' + params.value[1] + '<br>' +
+                                '最低:' + params.value[2] + '<br>' +
+                                '最高:' + params.value[3] + '<br>' +
+                                '涨跌:' + params.value[4]
+                    } else {
+                        var par;
+                        if (params[1].value != '-') {
+                            par = params[1];
+                        }
+                        else {
+                            par = params[0];
+                        }
+                        return par.name + '<br>' +
+                                '成交量:' + par.value + '股'
+                    }
+                }
+            },
+            grid: [{# 在同一坐标系内绘制多图 #}
+                {
+                    height: '50%'
+                },
+                {
+                    top: '72%', {# 距离顶部的高度 #}
+                    height: '16%'
+                }
+            ],
+            xAxis: [
+                {
+                    type: 'category',
+                    data: data0.categoryData,
+                    boundaryGap: false,
+                    axisLine: {
+                        onZero: false
+                    },
+                    min: 'dataMin',
+                    max: 'dataMax'
+                },
+                {
+                    type: 'category',
+                    data: data0.categoryData,
+                    gridIndex: 1,
+                    boundaryGap: false,
+                    axisLine: {
+                        onZero: false
+                    },
+                    axisTick: {show: false},
+                    axisLabel: {show: false},
+                    min: 'dataMin',
+                    max: 'dataMax'
+                }
+            ],
+            yAxis: [
+                {
+                    scale: true, {# 设置为true,坐标轴不用包含0刻度,更好展示细节 #}
+                    splitArea: {
+                        show: true
+                    },
+                    min: 'dataMin',
+                    max: 'dataMax'
+                },
+                {
+                    scale: true,
+                    gridIndex: 1,
+                    axisTick: {show: false},
+                    axisLine: {show: false},
+                    axisLabel: {show: false},
+                    splitLine: {show: false}  {# 是否限制网格线,类似matlab的grid on/off #}
+                }
+            ],
+            dataZoom: [{
+                type: 'slider',
+                start: 50,
+                xAxisIndex: [0, 1]  {# 实现同时控制两个图的x坐标轴 #}
+            }],
+            series: [
+                {
+                    name: '日K线图',
+                    type: 'candlestick',
+                    data: data0.values,
+                    xAxisIndex: 0,
+                    yAxisIndex: 0,
+                    itemStyle: {
+                        normal: {
+                            color0: 'green',
+                            borderColor0: 'green'
+                        }
+                    },
+                    markPoint: {
+                        label: {
+                            normal: {
+                                formatter: function (param) {
+                                    return param != null ? Math.round(param.value) : '';
+                                }
+                            }
+                        },
+                        data: [
+                            {
+                                name: '最大值',
+                                type: 'max',
+                                valueDim: 'highest'
+                            },
+                            {
+                                name: '最小值',
+                                type: 'min',
+                                valueDim: 'lowest'
+                            },
+                            {
+                                name: '平均值',
+                                type: 'average',
+                                valueDim: 'close'
+                            }
+                        ],
+                        tooltip: {
+                            formatter: function (param) {
+                                return param.name + '<br>' + (param.data.coord || '');
+                            }
+                        }
+                    },
+                    markLine: {
+                        symbol: ['none', 'none'],
+                        data: [
+                            [
+                                {
+                                    name: 'from lowest to highest',
+                                    type: 'min',
+                                    valueDim: 'lowest',
+                                    symbol: 'circle',
+                                    symbolSize: 10,
+                                    label: {
+                                        normal: {show: false},
+                                        emphasis: {show: false}
+                                    }
+                                },
+                                {
+                                    type: 'max',
+                                    valueDim: 'highest',
+                                    symbol: 'circle',
+                                    symbolSize: 10,
+                                    label: {
+                                        normal: {show: false},
+                                        emphasis: {show: false}
+                                    }
+                                }
+                            ],
+                            {
+                                name: 'min line on close',
+                                type: 'min',
+                                valueDim: 'close'
+                            },
+                            {
+                                name: 'max line on close',
+                                type: 'max',
+                                valueDim: 'close'
+                            }
+                        ]
+                    }
+                },
+                {
+                    name: '成交量_涨',
+                    type: 'bar',
+                    stack: '成交量',
+                    xAxisIndex: 1,
+                    yAxisIndex: 1,
+                    data: {{ stock_k.volumn_rise | safe }},
+                    itemStyle: {
+                        normal: {
+                            color: 'red'
+                        }
+                    }
+                },
+                {
+                    name: '成交量_跌',
+                    type: 'bar',
+                    stack: '成交量',
+                    xAxisIndex: 1,
+                    yAxisIndex: 1,
+                    data: {{ stock_k.volumn_fall | safe }},
+                    itemStyle: {
+                        normal: {
+                            color: 'green'
+                        }
+                    }
+
+                }
+            ]
+        };
+        myChart.setOption(option);
+
+
+        function splitData(rawData) {
+            var categoryData = [];
+            var values = [];
+            for (var i = 0; i < rawData.length; i++) {
+                categoryData.push(rawData[i].splice(0, 1)[0]);
+                values.push(rawData[i]);
+            }
+            return {
+                categoryData: categoryData,
+                values: values
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+        var myChart = echarts.init(document.getElementById('c_data'));
+
+        var option = {
+            {#            title: {#}
+            {#                text: '{{ stock_c.stock_name }}({{ stock_c.stock_id }})资金流图',#}
+            {#                x: 'center', {# 调节居中距离 #}
+            {#                y: '0%'  {# 调节上下距离 #}
+            {#            },#}
+            legend: {
+                data: ['主力净流入', '主力净流出', '主力净占比', '收盘价', '主力成本'],
+                left: 'center',
+                top: '5%'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'line'
+                },
+                formatter: function (params) {
+                    if (params[0].seriesType == 'line') {
+                        return params[0].name + '<br>' +
+                                params[0].seriesName + params[0].value + '元' + '<br>' +
+                                params[1].seriesName + params[1].value + '元';
+                    } else {
+                        var par;
+                        if (params[1].value != '-') {
+                            par = params[1];
+                        }
+                        else {
+                            par = params[0];
+                        }
+                        return par.name + '<br>' +
+                                par.seriesName + Math.round(par.value) + '万元' + '<br>' +
+                                par.seriesName + '占比' + params[2].value + '%'
+                    }
+                }
+            },
+            grid: [
+                {
+                    height: '50%'
+                },
+                {
+                    height: '20%',
+                    top: '70%'
+                }
+            ],
+            xAxis: [
+                {
+                    type: 'category',
+                    data: {{ stock_c.stock_date | safe }},
+                    boundaryGap: false,
+                    min: 'dataMin',
+                    max: 'dataMax'
+                },
+                {
+                    type: 'category',
+                    data: {{ stock_c.stock_date | safe }},
+                    boundaryGap: false,
+                    axisTick: {show: false},
+                    axisLabel: {show: false},
+                    min: 'dataMin',
+                    max: 'dataMax',
+                    gridIndex: 1
+                }
+            ],
+            yAxis: [
+                {
+                    name: '单位:万元',
+                    nameGap: 5,
+                    scale: true, {# 设置为true,坐标轴不用包含0刻度,更好展示细节 #}
+                    splitArea: {
+                        show: true
+                    },
+                    min: 'dataMin',
+                    max: 'dataMax'
+                },
+                {
+                    name: '主力净占比:%',
+                    nameGap: 5
+                },
+                {
+                    gridIndex: 1,
+                    scale: true
+                }
+            ],
+            dataZoom: [{
+                type: 'slider',
+                start: 50,
+                xAxisIndex: [0, 1]  {# 实现同时控制两个图的x坐标轴 #}
+            }],
+            series: [
+                {
+                    name: '主力净流入', {# 必须和legend对应 #}
+                    type: 'bar',
+                    stack: '资金流',
+                    data: {{ stock_c.maincash_data_rise | safe }},
+                    itemStyle: {
+                        normal: {
+                            color: 'red'
+                        }
+                    },
+                    markLine: {
+                        data: [
+                            {
+                                name: '平均线',
+                                yAxis: Math.round({{ stock_c.average_rise }})
+                            }
+                        ]
+                    }
+                },
+                {
+                    name: '主力净流出',
+                    type: 'bar',
+                    stack: '资金流',
+                    data: {{ stock_c.maincash_data_fall | safe }},
+                    itemStyle: {
+                        normal: {
+                            color: 'green'
+                        }
+                    },
+                    markLine: {
+                        data: [
+                            {
+                                name: '平均线',
+                                {#                                    type: 'average'#}
+                                yAxis: Math.round({{ stock_c.average_fall }})
+                            }
+                        ]
+                    }
+                },
+                {
+                    name: '主力净占比',
+                    type: 'line',
+                    data: {{ stock_c.maincash_rate }},
+                    yAxisIndex: 1,
+                    symbolSize: 7,
+                    showAllSymbol: true,
+                    lineStyle: {
+                        normal: {
+                            width: 1,
+                            type: 'dotted'
+                        }
+                    }
+                },
+                {
+                    name: '收盘价',
+                    type: 'line',
+                    data: {{ stock_c.price_close }},
+                    xAxisIndex: 1,
+                    yAxisIndex: 2,
+                    symbolSize: 7,
+                    showAllSymbol: true,
+                    lineStyle: {
+                        normal: {
+                            width: 1,
+                            type: 'dotted'
+                        }
+                    }
+                },
+                {
+                    name: '主力成本',
+                    type: 'line',
+                    data: {{ stock_c.main_cost | safe }},
+                    xAxisIndex: 1,
+                    yAxisIndex: 2,
+                    symbol: 'circle',
+                    symbolSize: 7,
+                    showAllSymbol: true
+                }
+            ]
+        };
+        myChart.setOption(option);
+
+    </script>
+{% endblock %}

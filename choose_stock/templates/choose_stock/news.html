@@ -35,7 +35,7 @@
             {% for each_news in news_yes_pos %}
                 <li style="list-style-type: none">
                     <a href="{% url 'news_detail' pk=each_news.pk %}">{{ each_news.name }}</a>
-                    <span style="float: right">{{ each_news.published_time | date:"Y-m-d H:i" }}</span><br>
+                    <span style="float: right">{{ each_news.published_time | date:"Y-m-d H:i" }}</span><br>  {# date:后面不能加空格 #}
                 </li>
             {% endfor %}
         </ul>

@@ -67,8 +67,11 @@ class HistoryCdata(scrapy.Spider):
 
     def parse2(self, response):
         cash_data = response.meta['item']
-
-        cash_data['join_degree'] = response.xpath('//span[@id="sp_jgcyd"]/text()').re(r'\d.*%')[0]  # 机构参与度,百分数
-        cash_data['control_type'] = response.xpath('//span[@id="sp_jgcyd"]/text()').re(r'属于.*')[0][2:].strip()  # 机构控盘类型
-        cash_data['main_cost'] = response.xpath('//span[@id="sp_zlcb"]/text()').re(r'成本(\d.*?)元')[0]  # 主力最新交易日成本价
-        yield cash_data
+        try:
+            cash_data['join_degree'] = response.xpath('//span[@id="sp_jgcyd"]/text()').re(r'\d.*%')[0]  # 机构参与度,百分数
+            cash_data['control_type'] = response.xpath('//span[@id="sp_jgcyd"]/text()').re(r'属于.*')[0][2:].strip()  # 机构控盘类型
+            cash_data['main_cost'] = response.xpath('//span[@id="sp_zlcb"]/text()').re(r'成本(\d.*?)元')[0]  # 主力最新交易日成本价
+            yield cash_data
+        except Exception as e:
+            print('*' * 64)
+            print('抓取数据错误:', e)
